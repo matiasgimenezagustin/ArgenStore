@@ -1,0 +1,26 @@
+.cart-btn{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #3C5D44;
+    padding: 0;
+    font-size: 22px;
+    color: white;
+    position: relative;
+}
+.cart-count{
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    background-color: #A2C3AA;
+    border: solid #141F17 1px    ;
+}
