@@ -1,0 +1,9 @@
+.item{
+    width: 350px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.161);
+}
+.btn-more{
+    color: white;
+}
