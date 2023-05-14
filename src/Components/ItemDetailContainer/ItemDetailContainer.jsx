@@ -5,10 +5,18 @@ import { useParams } from 'react-router-dom'
 const ItemDetailContainer = () => {
   const [currentProduct, setCurrentProduct] = useState({})
   const [loader, setLoader] = useState(false)
+  const [error, setError] =  useState(false)
   const {id} = useParams()
   useEffect(()=>{
     getProductById(id).then(res => {
-      setCurrentProduct(res)
+      if(res){
+        setError(false)
+        setCurrentProduct(res)
+      }
+      else{
+        setError(true)
+      }
+      
       setLoader(true)
     })
   }, [])
@@ -16,6 +24,11 @@ const ItemDetailContainer = () => {
 
     <div>
       {
+      error 
+      ?
+      <h1>Error 404: El producto no existe</h1>
+      :
+      (
         loader ?
         <>
           <h1>{currentProduct.nombre}</h1>
@@ -27,8 +40,10 @@ const ItemDetailContainer = () => {
         </>
         :
         <h2>Cargando...</h2>
-
-      }
+        )
+      
+      } 
+      
       
     </div>
   )
