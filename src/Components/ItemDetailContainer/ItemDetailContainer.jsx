@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { getProductById } from '../../../asyncMockup'
+
 import { useParams } from 'react-router-dom'
+import ItemDetail from '../ItemDetail/ItemDetail'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../../../firebaseConfig'
 
 const ItemDetailContainer = () => {
   const [currentProduct, setCurrentProduct] = useState({})
@@ -8,18 +11,17 @@ const ItemDetailContainer = () => {
   const [error, setError] =  useState(false)
   const {id} = useParams()
   useEffect(()=>{
-    getProductById(id).then(res => {
-      if(res){
-        setError(false)
-        setCurrentProduct(res)
-      }
-      else{
-        setError(true)
-      }
+    const nuevoDocumento = doc(db,"productos", id)
+    getDoc(nuevoDocumento)
+      .then((res) => {
+        const data = res.data()
+        !data ? setError(true) : setError(false)
+        const nuevoProducto = {id: res.id,...data}
+        setCurrentProduct(nuevoProducto)
+        setLoader(true)
       
-      setLoader(true)
-    })
-  }, [])
+      })
+  }, [id])
   return (
 
     <div>
@@ -30,14 +32,7 @@ const ItemDetailContainer = () => {
       :
       (
         loader ?
-        <>
-          <h1>{currentProduct.nombre}</h1>
-          <img src={currentProduct.imagen}/>
-          <h2>Precio: {currentProduct.precio}</h2>
-          <h2>Stock: {currentProduct.stock}</h2>
-          <p>{currentProduct.descripcion}</p>
-          <button className='btn-more'>Agregar al carrito</button>
-        </>
+        <ItemDetail currentProduct={currentProduct}/>
         :
         <h2>Cargando...</h2>
         )

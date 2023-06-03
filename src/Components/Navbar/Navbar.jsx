@@ -23,7 +23,10 @@ const Navbar = () => {
             Televisiones
           </NavLink>
         </nav>
-        <CartWidget/>
+        <NavLink to={"/cart"}>
+          <CartWidget/>
+
+        </NavLink>
     </header>
   )
 }
