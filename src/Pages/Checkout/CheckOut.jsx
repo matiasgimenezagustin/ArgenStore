@@ -2,15 +2,15 @@
 import React, { useState } from 'react';
 
 
-import {collection, addDoc, getFirestore} from 'firebase/firestore';
+import {collection, addDoc} from 'firebase/firestore';
 
 
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../ContextManager/CartContextProvider';
 import { db } from '../../../firebaseConfig';
 
 const CheckOut = () => {
-
+    const navigation = useNavigate()
     const {total, cart, vaciarCarrito} = useCart()
     
     const [load, setLoad] = useState(false);
@@ -20,10 +20,11 @@ const CheckOut = () => {
     const [buyer, setBuyer] = useState({
         Nombre:'',
         Email:'',
-        Telefono:''
+        Telefono:'',
+        RepetedEmail: ''
     });
 
-    const {Nombre, Email, Telefono} = buyer;
+    const {Nombre, Email, Telefono, RepeatedEmail} = buyer;
 
     const handleInputChange = (e) =>{
         setBuyer(({
@@ -36,10 +37,8 @@ const CheckOut = () => {
         try{
             const col = collection(db , 'Orders');
             const order = await addDoc(col, data,);
-            console.log("order", order);
-            console.log("order", order.id) ;
             setOrderID(order.id);
-            vaciarCarrito()
+
         }catch(error){
             console.log(error);
         }
@@ -47,13 +46,17 @@ const CheckOut = () => {
 
     const handleSubmit = (e) =>{
         e.preventDefault();
-        const day = new Date();
-        
-        const data = {day, buyer, cart, total:total()};
-        generateOrder(data);
-        setLoad(true);
+        if(Email === RepeatedEmail){
+            const day = new Date();
+            const data = {day, buyer, cart, total:total()};
+            generateOrder(data);
+            setLoad(true);
+        }
     }
-
+    const handleQuitStore = () =>{
+        navigation('/')
+        vaciarCarrito()
+    }
     return (
         <div className='checkOut'>
             {load === false ? 
@@ -90,6 +93,16 @@ const CheckOut = () => {
                         onChange={handleInputChange}
                         required
                         />
+                        <input 
+                        className='input'
+                        type='email'
+                        name='RepeatedEmail'
+                        placeholder="Confirmar email"
+                        value={RepeatedEmail}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        {Email !== RepeatedEmail && <p style={{color: 'red'}}>Error: el email y el email repetido no coinciden</p>}
                         <br />
                         <input type='submit' value='Finalizar Compra' className='endShop'/>
                 </form>
@@ -104,9 +117,9 @@ const CheckOut = () => {
                     <h3>Id de compra: {orderID}</h3>
                     <h3>A nombre de: {buyer.Nombre}</h3>
                     <h3>Precio final: ${total()} ARS</h3>
-                    <Link to="/" className='btnEnd'>
+                    <button onClick={handleQuitStore} className='btnEnd'>
                         Volver a la tienda
-                    </Link>
+                    </button>
                 </div>
                 </>
                 }
